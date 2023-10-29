@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1>Step 1: Laravel 10 Installation</h1>
+        <p>composer create-project laravel/laravel example-app</p>
+        <p>cd example-app</p>
+        <p>php artisan serve</p>
+        <p>localhost:: database create and name change in laravel .env database name</p>
+        <p>laravel Installation Done</p>
+    </div>
+    <div>
+        <h1>Step 2: Install Spatie Composer Packages</h1>
+        <p>composer require spatie/laravel-permission</p>
+        <p>composer require laravelcollective/html</p>
+        <p>php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"</p>
+        <h3>Add the service provider in your config/app.php file:</h3>
+        <p>
+            'providers' => [
+            // ...
+            Spatie\Permission\PermissionServiceProvider::class,
+        ];
+        </p>
+        <p> php artisan optimize:clear</p>
+        <p> php artisan config:clear</p>
+        <p>php artisan migrate</p>
+        <h3>Add the necessary trait to your User model:</h3>
+        <p>use Spatie\Permission\Traits\HasRoles;</p>
+        <p>In Class:: use HasRoles;</p>
+        <p>php artisan migrate</p>
+
+    </div>
+    <div>
+        <h1>Step:3 Add Middleware</h1>
+        <h3>app/Http/Kernel.php</h3>
+        <p>
+            protected $routeMiddleware = [
+            'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        ]
+        </p>
+    </div>
+
+    <div>
+        <h1>Step:4 Create Authentication</h1>
+        <p>composer require laravel/ui</p>
+        <p>php artisan ui bootstrap --auth</p>
+        <p>npm install</p>
+        <p>npm run build</p>
+    </div>
+
+
+
+
+
+    <div>
+        <h1>Step:5 Create Model</h1>
+        <p>user model, product model, permission model</p>
+        <p>php artisan make:model Product -m</p>
+        <p>permission migration table age thekei create ace tai sudu model create korbo</p>
+        <p>php artisan make:model Permission</p>
+        <p>user model and migration agei kora ace</p>
+        <h3>model create ses, akhon controller create korbo</h3>
+    </div>
+    <div>
+        <h1>Step:6 create controller</h1>
+        <p>HomeController age thekei create kora ace.</p>
+        <p>UserController, PermissionController, RoleController, ProductController</p>
+        <p>php artisan make:controller UserController -r</p>
+        <p>php artisan make:controller RoleController -r</p>
+        <p>php artisan make:controller PermissionController -r</p>
+        <p>php artisan make:controller ProductController -r</p>
+        <p>controller create ses</p>
+    </div>
+    <div>
+        <h1>Step:7 Create Route</h1>
+        <p>
+            Route::group(['middleware' => ['auth']], function(){
+                Route::resource('users', UserController::class);
+            });
+        </p>
+    </div>
+    <div>
+        <h1>Step:8 Create Seeder </h1>
+        <p>php artisan make:seeder PermissionTableSeeder</p>
+        <p>database/seeders/PermissionTableSeeder.php</p>
+        <p>
+            <?php
+  
+namespace Database\Seeders;
+  
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+  
+class PermissionTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $permissions = [
+           'role-list',
+           'role-create',
+           'role-edit',
+           'role-delete',
+           'product-list',
+           'product-create',
+           'product-edit',
+           'product-delete'
+        ];
+        
+        foreach ($permissions as $permission) {
+             Permission::create(['name' => $permission]);
+        }
+    }
+}
+        </p>
+        <p>php artisan db:seed --class=PermissionTableSeeder</p>
+        <p>create new seeder for creating admin user.</p>
+        <p>php artisan make:seeder CreateAdminUserSeeder</p>
+        <p>
+            <?php
+  
+namespace Database\Seeders;
+  
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+  
+class CreateAdminUserSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $user = User::create([
+            'name' => 'Hardik Savani', 
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('123456')
+        ]);
+        
+        $role = Role::create(['name' => 'Admin']);
+         
+        $permissions = Permission::pluck('id','id')->all();
+       
+        $role->syncPermissions($permissions);
+         
+        $user->assignRole([$role->id]);
+    }
+}
+        </p>
+        <p>php artisan db:seed --class=CreateAdminUserSeeder</p>
+        <p>aituku kaj korar por nijer moto kore kaj korte parbo</p>
+    </div>
+    
+</body>
+</html>
